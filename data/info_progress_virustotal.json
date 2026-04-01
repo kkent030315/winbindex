@@ -1,0 +1,20 @@
+{
+"next": null,
+"next_updates": null,
+"pending": {},
+"retry": [
+[
+"microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
+"86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
+],
+[
+"microsoft.ceres.docparsing.formathandlers.common.jpeginterop.dll",
+"04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
+],
+[
+"wdssdc.dll",
+"14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
+]
+],
+"updates": null
+}
