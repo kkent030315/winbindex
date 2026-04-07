@@ -4,6 +4,18 @@
 "pending": {},
 "retry": [
 [
+"bfsvc.dll",
+"c50b8435378451941546c66432de6e87eb615176d97a2739c08307cc619b9f8e"
+],
+[
+"dismprov.dll",
+"8876f4d83d1714e3a7f555de12cb9b0797f825f2b497552c2cc3b5f4c75d66b1"
+],
+[
+"icfupgd.dll",
+"9a48b24256638c53975b090bb84583017a3c5a98583a246518b43ba17d298c87"
+],
+[
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
 ],
@@ -12,16 +24,24 @@
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
 ],
 [
-"perfcounterinstaller.dll",
-"8ce762bbb12d5864cdc3677265022f240e78fb3557819a48991283a1b15c8c87"
+"mofd.dll",
+"f865d0004f39d9563c926fc6563f6c4b71dffa828619c6791f45130a6d9dcd71"
+],
+[
+"offlinelsa.dll",
+"3c298332ee70ed948f78092baf69886bd28d305b1720594ecd64aaa2b69054ed"
+],
+[
+"pnpdiag.dll",
+"398950f87de416875fd4feac6832190a3a80434697f36bdcb76a01858ac32f1f"
+],
+[
+"rasdiag.dll",
+"1ec4927bb405b85ef3f8baf9ba1afb1e4494faf28d85344c143c29f5102753e5"
 ],
 [
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
-],
-[
-"wpndatatransformer.dll",
-"fbf99188988c60bb470c2696518706359e95efa9c35c0d2d16d5cf6101bbb626"
 ]
 ],
 "updates": null
