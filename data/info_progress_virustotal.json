@@ -4,12 +4,24 @@
 "pending": {},
 "retry": [
 [
+"eeprov.dll",
+"b9a5c0709d293211e457a4d1d90b9b0af2d6c08bb060292e1341c3b2d0b3efa7"
+],
+[
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
 ],
 [
 "microsoft.ceres.docparsing.formathandlers.common.jpeginterop.dll",
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
+],
+[
+"threatresponseengine.dll",
+"b71258a745203c832757f030c31ece5987a057fd7b5fff4995fea7f8991e3e79"
+],
+[
+"vmcreate.exe",
+"ce38803f7ee627f048422fa4e11be93c0de3ac45d4e79bd17702113e05cec7aa"
 ],
 [
 "wdssdc.dll",
