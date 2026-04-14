@@ -1,20 +1,11 @@
 {
-"next": null,
+"next": [
+"wbemcore.dll",
+"50be0655c05ae8d4548eafaed4d62fb093e9151215cb2402f7b37b0c14a48e09"
+],
 "next_updates": null,
 "pending": {},
 "retry": [
-[
-"eapphost.dll",
-"b0166a3d281abf76074f7e49edb292a7d955657c9b5993641de849c2b5efdc42"
-],
-[
-"intlprovider.dll",
-"13728a8548e1cd553f256703d3eba271517e48e7ce4e708bcf4be14a7431f552"
-],
-[
-"knetpwrdepbroker.sys",
-"9280c6dad728ee0d497c86249278dec86f7ba0caf6b344ee4e2aa48980ae4972"
-],
 [
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
@@ -24,8 +15,8 @@
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
 ],
 [
-"mptfcustomizeiosignalclient.sys",
-"718b7de8ac6ca9903b88bc7ef6ab6c16d3982a3502348d17aaa86af8df2fdd28"
+"msoobewirelessplugin.dll",
+"a35db95f076ef89c028417874f4981d6a2a3ab302270bb0bd867d868b0663e70"
 ],
 [
 "wdssdc.dll",
