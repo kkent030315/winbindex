@@ -4,8 +4,12 @@
 "pending": {},
 "retry": [
 [
-"hvloader.efi",
-"fecfc2ec4e6772146f0f6c7e23c97b3c4de851b465dc6df66a862153c7f3c244"
+"bitlockerdeviceencryption.exe",
+"a6401a936a0a22b5cd44c2ee6fa9395f3f0b285985570efc4bb1ae1cb567bfbf"
+],
+[
+"cryptbase.dll",
+"572d7e8d82d97d4815cd1a26475b865ddce9ddc47fdb5921c5b94081160ab0c9"
 ],
 [
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
@@ -16,24 +20,24 @@
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
 ],
 [
-"tbs.dll",
-"8f1838f198e45c1418af799a8d5356f462dbf67db153ce86abe9a0107885cd35"
+"secureusbvideo.dll",
+"08ea6923711ee97a1c40ee41391aadffecc25aca707db7371f09c4132d74756a"
 ],
 [
-"threadpoolwinrt.dll",
-"556d65bc0e5fd7dff550f37e9a8b1b7bd45c7359b8059fd3b4905e748aed230f"
-],
-[
-"udwm.dll",
-"725cc9dca519f48787b8747cee1d2cc0d1d69bebe87f5172ca6cdab392c6a758"
-],
-[
-"usermgrproxy.dll",
-"0fb1631586019bc069ed857a79334566d6ca8ba850d31f067eb6142341374cc3"
+"tdx.sys",
+"2f1973731b166147663e5b6790cbe5351bad8cf5db14e196009313329cd38fce"
 ],
 [
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
+],
+[
+"windows.internal.shell.broker.dll",
+"d234029a997445b3364429c2ff720b7a6ac4ac8d6a6b59b360fa09e8a681470a"
+],
+[
+"windows.media.streaming.dll",
+"aa484bf55b876556b26e59465c52bd78a1f3dbfdc0d46d5ac72de629575e6243"
 ]
 ],
 "updates": null
