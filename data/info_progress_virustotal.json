@@ -4,12 +4,8 @@
 "pending": {},
 "retry": [
 [
-"bitlockerdeviceencryption.exe",
-"a6401a936a0a22b5cd44c2ee6fa9395f3f0b285985570efc4bb1ae1cb567bfbf"
-],
-[
-"cryptbase.dll",
-"572d7e8d82d97d4815cd1a26475b865ddce9ddc47fdb5921c5b94081160ab0c9"
+"appxdeploymentclient.dll",
+"f2d2c3f6aa2fa129c4674760f5f0b802949aaa9d4d8f792b9dc00a08dfecd663"
 ],
 [
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
@@ -20,24 +16,8 @@
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
 ],
 [
-"secureusbvideo.dll",
-"08ea6923711ee97a1c40ee41391aadffecc25aca707db7371f09c4132d74756a"
-],
-[
-"tdx.sys",
-"2f1973731b166147663e5b6790cbe5351bad8cf5db14e196009313329cd38fce"
-],
-[
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
-],
-[
-"windows.internal.shell.broker.dll",
-"d234029a997445b3364429c2ff720b7a6ac4ac8d6a6b59b360fa09e8a681470a"
-],
-[
-"windows.media.streaming.dll",
-"aa484bf55b876556b26e59465c52bd78a1f3dbfdc0d46d5ac72de629575e6243"
 ]
 ],
 "updates": null
