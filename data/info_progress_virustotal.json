@@ -4,10 +4,6 @@
 "pending": {},
 "retry": [
 [
-"appxdeploymentclient.dll",
-"f2d2c3f6aa2fa129c4674760f5f0b802949aaa9d4d8f792b9dc00a08dfecd663"
-],
-[
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
 ],
