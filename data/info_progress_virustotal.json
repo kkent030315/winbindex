@@ -4,10 +4,6 @@
 "pending": {},
 "retry": [
 [
-"microsoft.activedirectory.trlparser.resources.dll",
-"6b9e6b8fbb7afe6bceca8edacc33378b2deda22f21ec2b01c0cb1e4294bea337"
-],
-[
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
 ],
