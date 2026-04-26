@@ -4,6 +4,14 @@
 "pending": {},
 "retry": [
 [
+"iprtrmgr.dll",
+"16a27b7d4367f8b2941eef7b4d1530e270987c1ff647773cfee8f85f0152c2bd"
+],
+[
+"mapgeocoder.dll",
+"d05df8322bc5ba8e0c3b640f145e242c95bac0e9ed91bcfbd70ff874dd82645f"
+],
+[
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "86e2eac22ac346a33f1e8a0907786d6cc9b2a6c492d98fac7e5a237d95acfe58"
 ],
@@ -12,8 +20,20 @@
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
 ],
 [
+"objsel.dll",
+"39762996dd28670639f8c1747d0a819fc7229707aab6bcaee7503807777aa2a9"
+],
+[
+"twinapi.dll",
+"5149f294b865b624147ae3fadf8ecd727f64804edc6721845789782134a6188c"
+],
+[
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
+],
+[
+"windows.perception.stub.dll",
+"595506681e236a90fad57453d475b7bd1a6c74d6d8f248fbc1713766ed175fb8"
 ]
 ],
 "updates": null
