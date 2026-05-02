@@ -4,8 +4,8 @@
 "pending": {},
 "retry": [
 [
-"imesearch.exe",
-"2158be49764b9acffc8b7147c80f3ba528ff4f12f523ba50e8ecfb0f1903d2c3"
+"microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
+"4e8408f9b66ecf316e03887226086458471abbb4aa59815d911a785c02efa154"
 ],
 [
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
@@ -13,35 +13,19 @@
 ],
 [
 "microsoft.ceres.docparsing.formathandlers.common.jpeginterop.dll",
+"0118e0fcd676509ed9a750bf47467282e1c57332f8ed4a928d833a9faf57e23c"
+],
+[
+"microsoft.ceres.docparsing.formathandlers.common.jpeginterop.dll",
 "04f8591186445243c2e6a8f8161852de4f027381f077e8c78fadc09ee022f899"
 ],
 [
-"nslookup.exe",
-"a79a2ffb8b0262a85ca36c072c3cfdd5d61ac7fd4592625abe48dcb9c834335f"
-],
-[
-"ruximih.exe",
-"988b81d0fb706915a378e978961deb7ab3c328714b1bca05a6d91047f3c37871"
-],
-[
-"spctramc.sys",
-"760aa9eb35353aa2a17270dae386f000275d1e7610c3d3ee71867ec83f72496f"
-],
-[
-"wdfldr.sys",
-"3983c89ea7222fda807cb8b18fc7b29dfec75487517abe80f0eeda5fa7898e47"
+"samcli.dll",
+"bb7e47676e23c1f7444c1755253c558d9513eafc739c92288797ba00ad80d2e6"
 ],
 [
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
-],
-[
-"wpcmon.exe",
-"c453d9bcad6225f5d79b2a3e0a3f2727bcaa94b2abe55c835a21d6d89e18fa6a"
-],
-[
-"wpcuapapp.exe",
-"ec5eb81923e6668b856c6dfd4aa219d3967ab995e30ac63786d98dc9bc338e15"
 ]
 ],
 "updates": null
