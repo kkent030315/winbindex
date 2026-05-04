@@ -4,6 +4,14 @@
 "pending": {},
 "retry": [
 [
+"tableextractorwinrt.dll",
+"e7d9d54c38867ebe24dad2cdbb053a59111b332e0c24ffbc7f0a4fcb4ce9fbcf"
+],
+[
+"textinputlayoutdata.dll",
+"71a48a83739cf03f5aa5c2b860d735557e4d817c0eb8ab3f60dd7a26a5a13cad"
+],
+[
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
 ]
