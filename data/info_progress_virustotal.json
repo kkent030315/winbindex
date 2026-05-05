@@ -1,15 +1,30 @@
 {
-"next": null,
+"next": [
+"raschap.dll",
+"abc9cc7425d47c01fec54bfc8151b9eaa15cd362c5cba4b86618bb18e989a2aa"
+],
 "next_updates": null,
 "pending": {},
 "retry": [
 [
-"tableextractorwinrt.dll",
-"e7d9d54c38867ebe24dad2cdbb053a59111b332e0c24ffbc7f0a4fcb4ce9fbcf"
+"appextagent.dll",
+"d28d6faef0e4e92dd5e27940cfcd1966ca292216ea1582ff2d94f8dc94ea7c9a"
 ],
 [
-"textinputlayoutdata.dll",
-"71a48a83739cf03f5aa5c2b860d735557e4d817c0eb8ab3f60dd7a26a5a13cad"
+"avrt.dll",
+"8185f94d5559ce119cb5642217c242713acf4850810e86023314c30dc288cada"
+],
+[
+"coreshellapi.dll",
+"218022075a35c7a358d8e40677807b4481e768dd3f442372b75b2d07c0baec9e"
+],
+[
+"mfcore.dll",
+"52068c1609693bbdcc1250942ced2014667d4a7d14907f7b4a80d58bd7e3f565"
+],
+[
+"microsoft.uev.appagent.dll",
+"a5f8494aa8f0907545f8dabbdfbca7c11cdc290b3440e006f6720ce22fee05d4"
 ],
 [
 "wdssdc.dll",
