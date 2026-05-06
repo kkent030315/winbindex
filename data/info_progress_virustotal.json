@@ -4,8 +4,16 @@
 "pending": {},
 "retry": [
 [
-"microsoft.powershell.commands.diagnostics.resources.dll",
-"012e58167c315542d5e1b0fd20d5c01349ab7616e0c76df736f8d00f4d8a74c3"
+"imtctip.dll",
+"221804292fca0fdd8705089d3f3c4e879fcdbd421faed55809800b6cf6db8b8f"
+],
+[
+"keyboardfilterwmi.dll",
+"bb7ca440334679f2835ea807cdf4abaacd28d22ec62f4624c0cc71ba978e6422"
+],
+[
+"settingshandlers_storagesense.dll",
+"1859b12e95e26fb87c9b32402105a5dcb9e1e2e5cfa44b447ec2628144b97842"
 ],
 [
 "wdssdc.dll",
