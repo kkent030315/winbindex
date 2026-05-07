@@ -4,16 +4,8 @@
 "pending": {},
 "retry": [
 [
-"imtctip.dll",
-"221804292fca0fdd8705089d3f3c4e879fcdbd421faed55809800b6cf6db8b8f"
-],
-[
-"keyboardfilterwmi.dll",
-"bb7ca440334679f2835ea807cdf4abaacd28d22ec62f4624c0cc71ba978e6422"
-],
-[
-"settingshandlers_storagesense.dll",
-"1859b12e95e26fb87c9b32402105a5dcb9e1e2e5cfa44b447ec2628144b97842"
+"v3hostingfilter.dll",
+"1b5c75fb1ff731188c131b3f06601ac74fc8897171cfc5aebee46dc84d0cf8b7"
 ],
 [
 "wdssdc.dll",
