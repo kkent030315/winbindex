@@ -4,12 +4,8 @@
 "pending": {},
 "retry": [
 [
-"aitstatic.exe",
-"676c74ae8d5ab4c7ba1a48068de242a57a7303ee52a830eea5418c9aaf6fbaf8"
-],
-[
-"bioiso.exe",
-"48225bc973fabf27e4da818bffa03790d1df7efbebfc3317667ae5e58885fde8"
+"aarsvc.dll",
+"3a5208bb5e8bcb52741d29e98dc03d8939c22c17f433509eafa510c1392daba7"
 ],
 [
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
@@ -20,12 +16,20 @@
 "ebfaad13cc741efb12338de190ecc924ad371fc24a8d167238fa6fb104ad4a75"
 ],
 [
+"stobject.dll",
+"e33bc76f37f215576842c73f2322e7f05e9a9ef22cabeea04b6caf6e98d42a5b"
+],
+[
 "wdssdc.dll",
 "14635b7482587f4b3e76f4a6cece0657e2f88e660c7d0246da1e97d128b264b9"
 ],
 [
 "windows.applicationmodel.winmd",
 "da748e7082d5f8be039ec665d686200ef42bf0ee8e17d98ec908cef1179f7713"
+],
+[
+"windows.data.winmd",
+"3e6d1de460e53b22b7a485a31e00340a54baa018b60de07e4b80ed8379d63636"
 ],
 [
 "windows.devices.winmd",
@@ -52,8 +56,8 @@
 "50ee5f36b26439eb6a9f060b9fc8c47810f135a236c9baa79faa59ee0b529fa5"
 ],
 [
-"windows.ui.xamlhost.dll",
-"9fe81f030007d10ea30809145be30b2cae3dd13721dfcd5b47ac68eafc380dbb"
+"windows.ui.xaml.winmd",
+"5c5f1060f123c77800ea0a1cdc4112631dede0453c872b27244d4dc474e59c4d"
 ]
 ],
 "updates": null
