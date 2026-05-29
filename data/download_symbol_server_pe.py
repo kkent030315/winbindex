@@ -36,14 +36,23 @@ def download_pe_with_retries(session, url, dest_path, hash, name):
     while True:
         try:
             download_pe(session, url, dest_path)
-            return
+            return True
+        except requests.HTTPError as e:
+            status = e.response.status_code if e.response is not None else None
+            if status is not None and 400 <= status < 500:
+                # Permanent: the file isn't served at this URL (e.g. 404). Don't
+                # retry, just skip this entry.
+                print(f'HTTP {status} for {hash} ({name}), skipping')
+                return False
+            print(e)
         except Exception as e:
             print(e)
-            if time.time() - started_time > 60 * 30:
-                raise ServerTooManyRetries(f'Giving up on {hash} ({name}) after 30 minutes of retries')
-            time.sleep(sleep_time)
-            sleep_time = min(sleep_time * 2, 60 * 5)
-            print(f'Retrying {hash}')
+
+        if time.time() - started_time > 60 * 30:
+            raise ServerTooManyRetries(f'Giving up on {hash} ({name}) after 30 minutes of retries')
+        time.sleep(sleep_time)
+        sleep_time = min(sleep_time * 2, 60 * 5)
+        print(f'Retrying {hash}')
 
 
 def extract_pe_file_info(file_path):
@@ -105,7 +114,8 @@ def get_pe_info_from_symbol_server(session, hash, name, data):
     tempdir = Path(tempfile.mkdtemp(prefix='winbindex_pe_'))
     try:
         dest_path = tempdir / name
-        download_pe_with_retries(session, url, dest_path, hash, name)
+        if not download_pe_with_retries(session, url, dest_path, hash, name):
+            return None
 
         new_file_info = extract_pe_file_info(dest_path)
 
