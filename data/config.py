@@ -10,6 +10,17 @@ def compressed_filename_path(filename: str) -> Path:
     return out_path / 'by_filename_compressed' / (filename + '.json.gz')
 
 
+# Local cache of baseline (RTM) files for delta reconstruction. Deliberately
+# OUTSIDE out_path so deploy's `git add -A` never commits these binaries; it is
+# a runtime cache populated from install media (see populate_delta_bases.py),
+# never version-controlled. gitignored.
+delta_bases_path = Path('delta_bases')
+
+
+def delta_base_path(filename: str, branch) -> Path:
+    return delta_bases_path / str(branch) / filename
+
+
 deploy_save_disk_space = True
 deploy_amend_last_commit = True
 

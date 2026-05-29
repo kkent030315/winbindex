@@ -5,13 +5,17 @@ from pathlib import Path
 from typing import List
 import fnmatch
 import hashlib
+import tempfile
 import signify
 import base64
+import shutil
 import ctypes
 import json
 import re
 
 import config
+import delta_patch
+from ctypes import wintypes, cast, c_ubyte
 
 file_hashes = {}
 
@@ -275,6 +279,115 @@ def get_delta_data_for_manifest_file(manifest_path: Path, name: str, algorithm_t
     return result
 
 
+def get_pe_file_info(file_path: Path):
+    result = {}
+
+    size = file_path.stat().st_size
+
+    is_pe_file = False
+    if size >= 0x40:
+        # https://gist.github.com/geudrik/03152ba1a148d9475e81
+        with open(file_path, 'rb') as handle:
+            if handle.read(2) == b'MZ':
+                # Get PE offset from DOS header.
+                handle.seek(0x3c)
+                offset = unpack('<I', handle.read(4))[0]
+
+                if size >= offset + 0x54:
+                    handle.seek(offset)
+                    # Check if PE signature is valid.
+                    if handle.read(4) == b'PE\0\0':
+                        is_pe_file = True
+
+                        result['machineType'] = unpack('<H', handle.read(2))[0]
+
+                        handle.seek(offset + 8)
+                        result['timestamp'] = unpack('<I', handle.read(4))[0]
+
+                        handle.seek(offset + 0x50)
+                        result['virtualSize'] = unpack('<I', handle.read(4))[0]
+
+    if is_pe_file:
+        version_info = get_file_version_info(file_path, ['FileVersion', 'FileDescription'])
+
+        if version_info.get('FileVersion'):
+            result['version'] = version_info['FileVersion']
+
+        if version_info.get('FileDescription'):
+            result['description'] = version_info['FileDescription']
+
+        try:
+            signing_times = get_file_signing_times(file_path)
+            result['signingStatus'] = 'Unknown'  # Verification is too time consuming.
+            result['signatureType'] = 'Overlay'
+            result['signingDate'] = signing_times
+        except signify.exceptions.SignedPEParseError as e:
+            if str(e) != 'The PE file does not contain a certificate table.':
+                raise
+            result['signingStatus'] = 'Unsigned'
+
+    return result
+
+
+def apply_forward_delta(base_bytes: bytes, delta_path: Path):
+    # Apply a Windows forward differential to a base buffer via msdelta. Returns
+    # the reconstructed bytes, or None if msdelta rejects the base/delta.
+    for legacy in (False, True):
+        try:
+            buf = cast(base_bytes, wintypes.LPVOID)
+            out_ptr, out_size = delta_patch.apply_patchfile_to_buffer(buf, len(base_bytes), str(delta_path), legacy)
+            out = bytes((c_ubyte * out_size).from_address(out_ptr))
+            delta_patch.DeltaFree(out_ptr)
+            return out
+        except Exception:
+            continue
+    return None
+
+
+def reconstruct_delta_file_info(manifest_path: Path, name: str, algorithm: str, hash_to_assert: str, branch):
+    # A file shipped only as a forward differential has no version on its own;
+    # the symbol server can't always serve the exact bytes (timestamp+SizeOfImage
+    # collisions). If a cached baseline (RTM) for this file's branch is available,
+    # reconstruct the exact file by applying the forward delta to it, verify the
+    # hash, and read the authoritative version from the resulting PE.
+    if branch is None:
+        return None
+
+    base_path = config.delta_base_path(name, branch)
+    if not base_path.is_file():
+        return None
+
+    delta_path = manifest_path.parent.joinpath(manifest_path.stem, 'f', name)
+    if not delta_path.is_file():
+        return None
+
+    reconstructed = apply_forward_delta(base_path.read_bytes(), delta_path)
+    if reconstructed is None:
+        return None
+
+    hashers = {'md5': hashlib.md5, 'sha1': hashlib.sha1, 'sha256': hashlib.sha256}
+    if hashers[algorithm](reconstructed).hexdigest() != hash_to_assert:
+        # Wrong base (collision sibling) or corrupt delta: never publish unverified data.
+        return None
+
+    result = {
+        'size': len(reconstructed),
+        'md5': hashlib.md5(reconstructed).hexdigest(),
+        'sha1': hashlib.sha1(reconstructed).hexdigest(),
+        'sha256': hashlib.sha256(reconstructed).hexdigest(),
+    }
+
+    temp_dir = Path(tempfile.mkdtemp(prefix='winbindex_delta_'))
+    try:
+        temp_file = temp_dir / name
+        temp_file.write_bytes(reconstructed)
+        result.update(get_pe_file_info(temp_file))
+    finally:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+
+    return result
+
+
 def get_file_data_for_manifest_file(manifest_path: Path, name: str, algorithm_to_assert: str, hash_to_assert: str):
     file_path = manifest_path.parent.joinpath(manifest_path.stem, 'n', name)
     if not file_path.exists():
@@ -301,57 +414,12 @@ def get_file_data_for_manifest_file(manifest_path: Path, name: str, algorithm_to
         'sha256': sha256,
     }
 
-    is_pe_file = False
-
-    if size >= 0x40:
-        # https://gist.github.com/geudrik/03152ba1a148d9475e81
-        with open(file_path, 'rb') as handle:
-            if handle.read(2) == b'MZ':
-                # Get PE offset from DOS header.
-                handle.seek(0x3c)
-                offset = handle.read(4)
-                offset = unpack('<I', offset)[0]
-
-                if size >= offset + 0x54:
-                    handle.seek(offset)
-                    # Check if PE signature is valid.
-                    if handle.read(4) == b'PE\0\0':
-                        is_pe_file = True
-
-                        word = handle.read(2)
-                        result['machineType'] = unpack('<H', word)[0]
-
-                        handle.seek(offset + 8)
-                        dword = handle.read(4)
-                        result['timestamp'] = unpack('<I', dword)[0]
-
-                        handle.seek(offset + 0x50)
-                        dword = handle.read(4)
-                        result['virtualSize'] = unpack('<I', dword)[0]
-
-    if is_pe_file:
-        version_info = get_file_version_info(file_path, ['FileVersion', 'FileDescription'])
-
-        if version_info.get('FileVersion'):
-            result['version'] = version_info['FileVersion']
-
-        if version_info.get('FileDescription'):
-            result['description'] = version_info['FileDescription']
-
-        try:
-            signing_times = get_file_signing_times(file_path)
-            result['signingStatus'] = 'Unknown'  # Verification is too time consuming.
-            result['signatureType'] = 'Overlay'
-            result['signingDate'] = signing_times
-        except signify.exceptions.SignedPEParseError as e:
-            if str(e) != 'The PE file does not contain a certificate table.':
-                raise
-            result['signingStatus'] = 'Unsigned'
+    result.update(get_pe_file_info(file_path))
 
     return result
 
 
-def parse_manifest_file(manifest_path, file_el):
+def parse_manifest_file(manifest_path, file_el, branch=None):
     hashes = list(file_el.findall('hash'))
     if len(hashes) != 1:
         raise Exception('Expected to have a single hash tag')
@@ -393,6 +461,10 @@ def parse_manifest_file(manifest_path, file_el):
         file_info = get_delta_data_for_manifest_file(manifest_path, file_el.attrib['name'], algorithm, hash)
         if file_info:
             info_source = 'delta'
+            reconstructed = reconstruct_delta_file_info(manifest_path, file_el.attrib['name'], algorithm, hash, branch)
+            if reconstructed:
+                file_info = reconstructed
+                info_source = 'pe'
 
     if file_info:
         result['fileInfo'] = file_info
@@ -453,9 +525,16 @@ def parse_manifest(manifest_path: Path):
 
     assembly_identity = assembly_identities[0]
 
+    branch = None
+    version = assembly_identity.attrib.get('version')
+    if version:
+        parts = version.split('.')
+        if len(parts) == 4 and parts[2].isdigit():
+            branch = int(parts[2])
+
     files = []
     for file_el in root.findall('file'):
-        parsed = parse_manifest_file(manifest_path, file_el)
+        parsed = parse_manifest_file(manifest_path, file_el, branch)
         files.append(parsed)
 
     result = {

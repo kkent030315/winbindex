@@ -14,6 +14,7 @@ from upd03_parse_manifests import main as upd03_parse_manifests
 from upd04_get_virustotal_data import main as upd04_get_virustotal_data
 from upd05_group_by_filename import main as upd05_group_by_filename
 from symbol_server_link_enumerate import main as symbol_server_link_enumerate
+from download_symbol_server_pe import main as download_symbol_server_pe
 import config
 
 deploy_start_time = datetime.now()
@@ -109,6 +110,25 @@ def add_update_to_info_progress_symbol_server(update_kb):
         json.dump(info_progress_symbol_server, f, indent=0, sort_keys=True)
 
 
+def add_update_to_info_progress_symbol_server_download(update_kb):
+    info_progress_path = config.out_path.joinpath('info_progress_symbol_server_download.json')
+    if info_progress_path.is_file():
+        with open(info_progress_path, 'r') as f:
+            info_progress = json.load(f)
+    else:
+        info_progress = {}
+
+    updates = info_progress.get('updates')
+    if updates is not None:
+        assert update_kb not in updates, update_kb
+        updates.append(update_kb)
+
+    info_progress['next'] = None
+
+    with open(info_progress_path, 'w') as f:
+        json.dump(info_progress, f, indent=0, sort_keys=True)
+
+
 def run_symbol_server_updates():
     # GitHub Actions has a 6 hour limit, so stop 10 minutes before that.
     time_to_stop = min(datetime.now() + timedelta(minutes=60), deploy_start_time + timedelta(hours=6, minutes=-10))
@@ -127,6 +147,26 @@ def run_symbol_server_updates():
         stop_deploy = True
 
     return f'Updated info of {num_files} files from Microsoft Symbol Server'
+
+
+def run_symbol_server_download_updates():
+    # GitHub Actions has a 6 hour limit, so stop 10 minutes before that.
+    time_to_stop = min(datetime.now() + timedelta(minutes=60), deploy_start_time + timedelta(hours=6, minutes=-10))
+    if datetime.now() >= time_to_stop:
+        return None
+
+    print('Running download_symbol_server_pe')
+    result = download_symbol_server_pe(time_to_stop)
+    if result is None:
+        return None
+
+    num_files, too_many_retries = result
+
+    if too_many_retries:
+        global stop_deploy
+        stop_deploy = True
+
+    return f'Updated info of {num_files} files from Microsoft Symbol Server (downloaded PE)'
 
 
 def add_update_to_info_progress_virustotal(update_kb):
@@ -256,8 +296,10 @@ def run_deploy():
             result = run_symbol_server_updates()
             if result:
                 return result
-            else:
-                return run_virustotal_updates()
+            result = run_symbol_server_download_updates()
+            if result:
+                return result
+            return run_virustotal_updates()
 
         progress_state = {
             'update_kb': new_single_update,
@@ -291,6 +333,7 @@ def run_deploy():
     config.out_path.joinpath('updates.json').unlink()
 
     add_update_to_info_progress_symbol_server(progress_state['update_kb'])
+    add_update_to_info_progress_symbol_server_download(progress_state['update_kb'])
     add_update_to_info_progress_virustotal(progress_state['update_kb'])
 
     return f'Updated with files from {progress_state["update_kb"]}'
