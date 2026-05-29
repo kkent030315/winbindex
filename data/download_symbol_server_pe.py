@@ -2,6 +2,7 @@ from isal import igzip as gzip
 from datetime import datetime
 from struct import unpack
 from pathlib import Path
+import concurrent.futures
 import tempfile
 import requests
 import orjson
@@ -104,9 +105,18 @@ def extract_pe_file_info(file_path):
     return result
 
 
-def get_pe_info_from_symbol_server(session, hash, name, data):
-    file_info = data[hash]['fileInfo']
+# Number of concurrent symbol-server downloads. Lower than the HEAD-only
+# enumeration (these are full multi-MB GETs, so bandwidth-bound).
+DOWNLOAD_CONNECTIONS = 16
+# Process in chunks so progress/time-budget is checked and gz files are flushed
+# periodically. Items are sorted by filename, so a chunk spans few filenames.
+CHUNK_SIZE = 64
 
+
+def get_pe_info_from_symbol_server(session, name, hash, file_info):
+    # Worker: download + extract + verify for a single delta+ entry. Returns the
+    # reconstructed full 'pe' fileInfo, or None to skip. No shared state is
+    # mutated, so this is safe to run concurrently.
     assert get_file_info_type(file_info) == 'delta+', file_info
 
     url = make_symbol_server_url(name, file_info['timestamp'], file_info['virtualSize'])
@@ -137,9 +147,7 @@ def get_pe_info_from_symbol_server(session, hash, name, data):
 
         assert get_file_info_type(new_file_info) in ('vt_or_file', 'file_unknown_sig'), new_file_info
 
-        data[hash]['fileInfo'] = new_file_info
-
-        return data
+        return new_file_info
     finally:
         shutil.rmtree(tempdir, ignore_errors=True)
 
@@ -152,47 +160,78 @@ def get_pe_info_for_files(names_and_hashes, session, time_to_stop):
         'too_many_retries': False,
     }
 
-    output_path = None
-    data = None
-    data_modified = False
+    data_cache = {}   # name -> loaded gz dict
+    modified = set()  # names with applied changes pending a write
+
+    def load(name):
+        if name not in data_cache:
+            with gzip.open(config.compressed_filename_path(name), 'rb') as f:
+                data_cache[name] = orjson.loads(f.read())
+        return data_cache[name]
+
+    def flush(name):
+        if name in modified:
+            write_to_gzip_file(config.compressed_filename_path(name), orjson.dumps(data_cache[name]))
+            modified.discard(name)
+        data_cache.pop(name, None)
 
     count = 0
-    for name, hash in names_and_hashes:
+    index = 0
+    total = len(names_and_hashes)
+    stop = False
+    while index < total and not stop:
         if time_to_stop and datetime.now() >= time_to_stop:
-            result['next'] = (name, hash)
+            result['next'] = tuple(names_and_hashes[index])
             break
 
-        new_output_path = config.compressed_filename_path(name)
-        if new_output_path != output_path:
-            if output_path and data_modified:
-                write_to_gzip_file(output_path, orjson.dumps(data))
+        chunk = names_and_hashes[index:index + CHUNK_SIZE]
+        for name, hash in chunk:
+            load(name)
 
-            output_path = config.compressed_filename_path(name)
-            with gzip.open(output_path, 'rb') as f:
-                data = orjson.loads(f.read())
-                data_modified = False
+        # Download + extract concurrently; workers don't touch data_cache.
+        results = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=DOWNLOAD_CONNECTIONS) as executor:
+            future_to_item = {
+                executor.submit(get_pe_info_from_symbol_server, session, name, hash,
+                                data_cache[name][hash]['fileInfo']): (name, hash)
+                for name, hash in chunk
+            }
+            for future in concurrent.futures.as_completed(future_to_item):
+                name, hash = future_to_item[future]
+                try:
+                    results[(name, hash)] = future.result()
+                except ServerTooManyRetries as e:
+                    print(e)
+                    results[(name, hash)] = ServerTooManyRetries
 
-        try:
-            new_data = get_pe_info_from_symbol_server(session, hash, name, data)
-        except ServerTooManyRetries as e:
-            print(e)
-            result['next'] = (name, hash)
-            result['too_many_retries'] = True
-            break
+        # Apply results on the main thread (no concurrent dict mutation).
+        for name, hash in chunk:
+            r = results.get((name, hash))
+            if r is ServerTooManyRetries:
+                result['next'] = (name, hash)
+                result['too_many_retries'] = True
+                stop = True
+                break
+            if r:
+                data_cache[name][hash]['fileInfo'] = r
+                modified.add(name)
+                result['found'].add((name, hash))
+            else:
+                result['not_found'].add((name, hash))
 
-        if new_data:
-            data = new_data
-            data_modified = True
-            result['found'].add((name, hash))
-        else:
-            result['not_found'].add((name, hash))
+        count += len(chunk)
+        if config.verbose_progress:
+            print(f'Processed {count} of {total}')
 
-        count += 1
-        if count % 10 == 0 and config.verbose_progress:
-            print(f'Processed {count} of {len(names_and_hashes)}')
+        if not stop:
+            remaining = {nm for nm, _ in names_and_hashes[index + CHUNK_SIZE:]}
+            for nm in [nm for nm in data_cache if nm not in remaining]:
+                flush(nm)
 
-    if output_path and data_modified:
-        write_to_gzip_file(output_path, orjson.dumps(data))
+        index += CHUNK_SIZE
+
+    for nm in list(data_cache):
+        flush(nm)
 
     return result
 
