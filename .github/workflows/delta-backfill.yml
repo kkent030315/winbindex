@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: data/delta_bases
-          key: winbindex-delta-bases-v1
+          key: winbindex-delta-bases-v2
       - name: Populate delta baselines (from install media)
         run: |
           cd data

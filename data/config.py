@@ -28,7 +28,8 @@ def delta_base_path(filename: str, branch) -> Path:
 delta_base_media = [
     (17763, 'ci.dll', 'https://archive.org/download/Win10_1809_English_x64/Win10_1809_English_x64.iso'),
     (18362, 'ci.dll', 'https://archive.org/download/Win10_1903_V1_English_x64/Win10_1903_V1_English_x64.iso'),
-    (22000, 'ci.dll', 'https://archive.org/download/windows-11-21h2/Win11_English_x64v1.iso'),
+    (22000, 'ci.dll', 'https://archive.org/download/windows-11-build-22000.1/Windows%2011%20build%2022000.1.iso'),
+    (22621, 'ci.dll', 'https://archive.org/download/22621.1.ni-release.-220506-1250/22621.1.ni_release.220506-1250_25SKUs.iso'),
 ]
 
 

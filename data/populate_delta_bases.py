@@ -54,12 +54,19 @@ def extract_from_iso(iso_url: str, name: str, dest: Path):
                 for chunk in response.iter_content(chunk_size=1024 * 1024):
                     f.write(chunk)
 
-        # ISO -> sources/install.wim -> Windows\System32\<name>
-        subprocess.check_call(['7z', 'e', str(iso_path), 'sources/install.wim',
-                               f'-o{temp_dir}', '-y'], stdout=subprocess.DEVNULL)
+        # ISO -> sources/install.wim (or install.esd) -> Windows\System32\<name>
+        image = None
+        for inner in ('sources/install.wim', 'sources/install.esd'):
+            subprocess.run(['7z', 'e', str(iso_path), inner, f'-o{temp_dir}', '-y'],
+                           stdout=subprocess.DEVNULL)
+            candidate = temp_dir / Path(inner).name
+            if candidate.is_file():
+                image = candidate
+                break
         iso_path.unlink()
-        wim_path = temp_dir / 'install.wim'
-        extract_from_wim(wim_path, name, dest)
+        if image is None:
+            raise Exception('no install.wim/install.esd found in ISO')
+        extract_from_wim(image, name, dest)
     finally:
         shutil.rmtree(temp_dir, ignore_errors=True)
 
