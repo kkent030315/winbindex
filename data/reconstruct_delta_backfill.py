@@ -1,6 +1,7 @@
 from isal import igzip as gzip
 import orjson
 import sys
+import time
 import json
 import shutil
 import hashlib
@@ -58,11 +59,26 @@ def download_and_extract_update(windows_version, kb, work_dir):
 
     work_dir.mkdir(parents=True, exist_ok=True)
     local_path = work_dir / url.split('/')[-1]
-    with requests.get(url, stream=True, timeout=180) as response:
-        response.raise_for_status()
-        with open(local_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=1024 * 1024):
-                f.write(chunk)
+
+    # Update packages are large; retry transient network failures.
+    last_error = None
+    for attempt in range(4):
+        try:
+            with requests.get(url, stream=True, timeout=180) as response:
+                response.raise_for_status()
+                with open(local_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=1024 * 1024):
+                        f.write(chunk)
+            last_error = None
+            break
+        except (requests.exceptions.ChunkedEncodingError,
+                requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout) as e:
+            last_error = e
+            print(f'  download retry {attempt + 1} for {kb}: {e}')
+            time.sleep(2 ** attempt)
+    if last_error is not None:
+        raise last_error
 
     extract_update_files(work_dir, local_path, windows_version)
 
@@ -81,6 +97,11 @@ def reconstruct_entry(name, hash, entry):
             try:
                 download_and_extract_update(windows_version, kb, work_dir)
             except (UpdateNotFound, UpdateNotSupported):
+                continue
+            except Exception as e:
+                # A flaky download / extraction for one update must not abort the
+                # whole backfill; skip this candidate and move on.
+                print(f'  skip {kb} ({windows_version}): {e}')
                 continue
 
             deltas = [p for p in work_dir.rglob(name) if p.parent.name == 'f']
