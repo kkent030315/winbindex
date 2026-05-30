@@ -1,0 +1,63 @@
+name: Delta Reconstruction Backfill
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_dispatch:
+
+concurrency: winbindex-delta-backfill
+
+jobs:
+  backfill:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Checkout gh-pages
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: data/gh-pages
+      - name: Override out_path
+        run: |
+          echo ./gh-pages/data > data/.out_path_override
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+          cache: 'pip'
+          cache-dependency-path: '.github/requirements.txt'
+      - name: Install Python dependencies
+        run: python -m pip install -r .github/requirements.txt
+      - name: Set up Git config
+        run: |
+          git config --global user.email "69083578+winbindex-deploy-bot@users.noreply.github.com"
+          git config --global user.name "winbindex-deploy-bot"
+          git config --global core.longpaths true
+      - name: Restore delta baseline cache
+        uses: actions/cache@v4
+        with:
+          path: data/delta_bases
+          key: winbindex-delta-bases-v1
+      - name: Populate delta baselines (from install media)
+        run: |
+          cd data
+          python -X utf8 -u populate_delta_bases.py --all
+      - name: Run delta reconstruction backfill
+        run: |
+          cd data
+          python -X utf8 -u reconstruct_delta_backfill.py ci.dll
+      - name: Commit results
+        run: |
+          cd data/gh-pages
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Reconstruct delta+ files from install-media baselines"
+            git push
+          fi

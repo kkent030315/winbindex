@@ -2,3 +2,4 @@ __pycache__/
 /.out_path_override
 /gh-pages/
 /delta_bases/
+/delta_backfill_work/

@@ -21,6 +21,17 @@ def delta_base_path(filename: str, branch) -> Path:
     return delta_bases_path / str(branch) / filename
 
 
+# Install media to source delta-reconstruction baselines from, as
+# (branch, filename, iso_url). The baseline is the branch's RTM build of the
+# file; the hash check in the backfill rejects a wrong baseline, so an unverified
+# url here can only fail to fix entries, never publish wrong data.
+delta_base_media = [
+    (17763, 'ci.dll', 'https://archive.org/download/Win10_1809_English_x64/Win10_1809_English_x64.iso'),
+    (18362, 'ci.dll', 'https://archive.org/download/Win10_1903_V1_English_x64/Win10_1903_V1_English_x64.iso'),
+    (22000, 'ci.dll', 'https://archive.org/download/windows-11-21h2/Win11_English_x64v1.iso'),
+]
+
+
 deploy_save_disk_space = True
 deploy_amend_last_commit = True
 
