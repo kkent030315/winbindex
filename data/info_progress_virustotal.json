@@ -4,6 +4,10 @@
 "pending": {},
 "retry": [
 [
+"hotpatchutil.dll",
+"47a0508edbb4c623c9e6e9d210f90c36185244f50f71e5b4c50c226f0a029158"
+],
+[
 "microsoft.ceres.docparsing.formathandlers.common.configuration.dll",
 "563ba711761821f9e3fcd5cac84e52a74b26f1a5e94208792e7940823a4618c7"
 ],
